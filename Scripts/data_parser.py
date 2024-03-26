@@ -417,7 +417,7 @@ def receive_table(table=None, name=""):
         if FAILED_QUERIES is not None:
             FAILED_QUERIES_FRAME = pandas.DataFrame(FAILED_QUERIES)
             print(FAILED_QUERIES_FRAME)
-            with open("../Data/failed_queries.csv", "a") as f:
+            with open("Data/failed_queries.csv", "a") as f:
                 f.write('\n')
                 FAILED_QUERIES_FRAME.to_csv(f, index=False, mode='a', header=False)
 
@@ -426,27 +426,27 @@ def receive_table(table=None, name=""):
         if CHARGES is not None:
             print(CHARGES)
             print(f"Unique citations in CHARGES table: {CHARGES['CitationNumber'].nunique()}")
-            CHARGES.to_csv("../Data/charges.csv", index=False, mode='a', header=False)
+            CHARGES.to_csv("Data/charges.csv", index=False, mode='a', header=False)
         if DETAILS is not None:
             print(DETAILS)
             print(f"Unique citations in DETAILS table: {DETAILS['CitationNumber'].nunique()}")
-            DETAILS.to_csv("../Data/details.csv", index=False, mode='a', header=False)
+            DETAILS.to_csv("Data/details.csv", index=False, mode='a', header=False)
         if OBLIGATIONS is not None:
             print(OBLIGATIONS)
             print(f"Unique citations in OBLIGATIONS table: {OBLIGATIONS['CitationNumber'].nunique()}")
-            OBLIGATIONS.to_csv("../Data/obligations.csv", index=False, mode='a', header=False)
+            OBLIGATIONS.to_csv("Data/obligations.csv", index=False, mode='a', header=False)
         if CASEDETAILS is not None:
             print(CASEDETAILS)
             print(f"Unique citations in CASE DETAILS table: {CASEDETAILS['CitationNumber'].nunique()}")
-            CASEDETAILS.to_csv("../Data/case_details.csv", index=False, mode='a', header=False)
+            CASEDETAILS.to_csv("Data/case_details.csv", index=False, mode='a', header=False)
         if HEARINGS is not None:
             print(HEARINGS)
             print(f"Unique citations in the HEARINGS table: {HEARINGS['CitationNumber'].nunique()}")
-            HEARINGS.to_csv("../Data/hearings.csv", index=False, mode='a', header=False)
+            HEARINGS.to_csv("Data/hearings.csv", index=False, mode='a', header=False)
         if EVENTS is not None:
             print(EVENTS)
             print(f"Unique citations in the EVENTS table: {EVENTS['CitationNumber'].nunique()}")
-            EVENTS.to_csv("../Data/events.csv", index=False, mode='a', header=False)
+            EVENTS.to_csv("Data/events.csv", index=False, mode='a', header=False)
 
     else:
         if "charges" in name:

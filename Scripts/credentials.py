@@ -1,3 +1,3 @@
-sender = "******@outlook.com"
-recipient = "******@gmail.com"
-password = '******'
+sender = "samlee.economics@outlook.com"
+recipient = "samlee.byu@gmail.com"
+password = 'BYUeconomics'

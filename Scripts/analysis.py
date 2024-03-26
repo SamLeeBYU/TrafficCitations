@@ -9,7 +9,7 @@ import pandas
 import numpy as np
 import datetime
 
-def condense(dir = "../Data", extension = "csv"):
+def condense(dir = "Data", extension = "csv"):
     file_dir = dir
     file_paths = glob.glob(os.path.join(file_dir, f"*.{extension}"))
 
@@ -31,7 +31,7 @@ def condense(dir = "../Data", extension = "csv"):
 def clean(data):
     return float(data.strip().replace("$",""))
 
-def obligations_summary(dir="../Data", file="obligations.csv"):
+def obligations_summary(dir="Data", file="obligations.csv"):
     table = pandas.read_csv(f"{dir}/{file}")
     summary = table.groupby(["DateScraped", "CitationNumber"])
 
@@ -102,7 +102,7 @@ def obligations_summary(dir="../Data", file="obligations.csv"):
 
     return differences_data
 
-def case_details_summary(dir="../Data", file="case_details.csv"):
+def case_details_summary(dir="Data", file="case_details.csv"):
     case_details = pandas.read_csv(f"{dir}/{file}")
 
     case_data = case_details[["CitationNumber", "DateScraped", "CaseStatus", "DefenseAttorney"]].copy()
@@ -132,7 +132,7 @@ def case_details_summary(dir="../Data", file="case_details.csv"):
         
     return case_data.sort_values(["CitationNumber", "DateScraped"], ascending=False).reset_index(drop=True)
 
-def charges_summary(dir="../Data", file="charges.csv"):
+def charges_summary(dir="Data", file="charges.csv"):
     charges = pandas.read_csv(f"{dir}/{file}")
 
     charges_data = charges[["CitationNumber", "DateScraped", "Dispo"]].copy()
@@ -208,12 +208,13 @@ def getChanges(o,c,ch): #pass in dfs from obligation_summary, case_details_summa
         ChangeTotals["CitationNumber"].append(str(citation))
         data = pandas.DataFrame(data)
         ChangeTotals["TotalChanges"].append(np.sum(data["DispoChange"].values.astype(int)))
+    print(ChangeTotals)
     ChangeTotals = pandas.DataFrame(ChangeTotals).groupby("CitationNumber").sum().reset_index()
     #Add a date column to the changes table so that we compare the changes across Change Totals over time
     ChangeTotals["DateAnalyzed"] = [datetime.date.today()]*len(ChangeTotals)
     return ChangeTotals.sort_values(["TotalChanges", "CitationNumber"], ascending=False)
 
-def analyzeChanges(dir="../Data", file="Total Changes.csv", summary_files=["Obligations Summary.csv", "Case Details Summary.csv", "Charges Summary.csv"], time_difference=1):
+def analyzeChanges(dir="Data", file="Total Changes.csv", summary_files=["Obligations Summary.csv", "Case Details Summary.csv", "Charges Summary.csv"], time_difference=1):
     data = pandas.read_csv(f"{dir}/{file}", on_bad_lines='skip')
 
     # print(data)
@@ -336,3 +337,12 @@ def analyzeChanges(dir="../Data", file="Total Changes.csv", summary_files=["Obli
 def merge_tables(o,c,ch):
     merged_table = (o.merge(c, on=["DateScraped", "CitationNumber"], how="left")).merge(ch, on=["DateScraped", "CitationNumber"], how="left").reset_index(drop=True)
     return merged_table
+
+if __name__ == "__main__":
+    condense()
+    obligations = obligations_summary()
+    case_details = case_details_summary()
+    charges = charges_summary()
+    totals = getChanges(obligations, case_details, charges)
+
+    print(totals)

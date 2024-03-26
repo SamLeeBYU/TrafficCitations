@@ -12,6 +12,9 @@ import pandas
 import time
 import os
 import glob
+import schedule
+from datetime import datetime, timedelta
+import pytz
 
 import user
 import data_parser
@@ -21,7 +24,7 @@ import email_data
 class Citations:
 
     def __init__(self):
-        file_dir = "../Data/Citations"
+        file_dir = "Data/Citations"
         file_paths = glob.glob(os.path.join(file_dir, "*.csv"))
 
         self.data = file_paths
@@ -62,18 +65,18 @@ class Citations:
 
         print("Here is the Grand Summary:\n")
         print(merged_summary)
-        merged_summary.to_csv("../Data/Grand Summary.csv", index=False)
+        merged_summary.to_csv("Data/Grand Summary.csv", index=False)
 
         print("Here are the total changes since we started scraping of each citation:\n")
         print(totals)
 
-        obligations.to_csv("../Data/Obligations Summary.csv", index=False)
-        case_details.to_csv("../Data/Case Details Summary.csv", index=False)
-        charges.to_csv("../Data/Charges Summary.csv", index=False)
+        obligations.to_csv("Data/Obligations Summary.csv", index=False)
+        case_details.to_csv("Data/Case Details Summary.csv", index=False)
+        charges.to_csv("Data/Charges Summary.csv", index=False)
         
         #Append the changes to the total changes file so we can compare changes across time.
         #Of course, all the changes across time are already documented in the tables above, but this gives us quicker summary without looking at each entery of True/Fals values
-        totals.to_csv("../Data/Total Changes.csv", index=False, mode='a', header=False) #The index is the CitationNumber
+        totals.to_csv("Data/Total Changes.csv", index=False, mode='a', header=False) #The index is the CitationNumber
 
         #Analyze the totals to see where the changes occured:
         differences, changes = analysis.analyzeChanges()
@@ -92,4 +95,26 @@ class Citations:
         email_data.email_new(email_dfs)
 
 program = Citations()
-program.beginIteration()
+
+def schedule_function():
+    # Set timezone to U.S. Mountain Time
+    tz = pytz.timezone("US/Mountain")
+
+    # Calculate the next 6 a.m. and 6 p.m. in U.S. Mountain Time
+    now = datetime.now(tz)
+    next_6am = datetime(now.year, now.month, now.day, 6, 0, 0, tzinfo=tz)
+    #next_6pm = datetime(now.year, now.month, now.day, 18, 0, 0, tzinfo=tz)
+
+    # Schedule the function to run at 6 a.m.
+    schedule.every().day.at(next_6am.strftime("%H:%M")).do(program.beginIteration)
+    #schedule.every().day.at(next_6pm.strftime("%H:%M")).do(program.beginIteration)
+
+if __name__ == "__main__":
+    program.beginIteration()
+
+    #Run the scraper every day at 6 a.m. and 6 p.m.
+    schedule_function()
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1000)

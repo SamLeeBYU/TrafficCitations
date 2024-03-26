@@ -5,11 +5,16 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 import data_parser
 
-PATH = "Driver/chromedriver.exe"
-driver = webdriver.Chrome(PATH)
+PATH = "../Driver/chromedriver.exe"
+
+#driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+service = Service(ChromeDriverManager(driver_version="123.0.6312.58").install())
+driver = webdriver.Chrome(service=service)
 
 date_format = "%m/%d/%Y"
 
@@ -106,7 +111,7 @@ def fetch_citation(url="", citation="", plate="", emptyRecords=False, date=None)
 
     if not emptyRecords and isinstance(citation, str) and len(citation) > 5 and not ("{" in citation or "}" in citation or "nan" in plate):
         #First try the citation number
-        #This is the most reliable because there's only one unique citation number
+        #This is the most reliable because there's only one unique citation number      
 
         # Find the 7th element with the class name "rtsLink"
         citation_link = links[6]
